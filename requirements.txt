@@ -1,0 +1,4 @@
+requests==2.32.3
+flask==3.0.3
+
+#pip install flask werkzeug requests pyyaml

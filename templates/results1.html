@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết Quả Quét</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1><i class="fas fa-shield-alt"></i> Quét Lỗ Hổng Bảo Mật</h1>
+        <nav class="header-nav">
+            <a href="/"><i class="fas fa-home"></i> Trang chủ</a>
+            <a href="/history"><i class="fas fa-history"></i> Lịch sử</a>
+            <a href="/about"><i class="fas fa-info-circle"></i> Giới thiệu</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1><i class="fas fa-clipboard-check"></i> Kết Quả Quét</h1>
+            </div>
+
+            {% if error %}
+            <div class="card">
+                <p class="status-error"><i class="fas fa-exclamation-circle"></i> {{ error }}</p>
+            </div>
+            {% else %}
+            <div class="card">
+                <h2><i class="fas fa-info-circle"></i> Thông Tin Yêu Cầu</h2>
+                <div class="form-group">
+                    <p><strong><i class="fas fa-bullseye"></i> Mục tiêu:</strong> {{ scan_data.request.target }}</p>
+                    <p><strong><i class="fas fa-bug"></i> Loại lỗ hổng:</strong>
+                        <span class="badge badge-info">
+                            <i class="fas fa-bug"></i> {{ scan_data.request.vulnerability_type }}
+                        </span>
+                    </p>
+                    <p><strong><i class="fas fa-file-code"></i> Templates:</strong> {{ scan_data.request.templates |
+                        join(', ') }}</p>
+                    <p><strong><i class="fas fa-tachometer-alt"></i> Rate Limit:</strong> {{
+                        scan_data.request.rate_limit }}</p>
+                    <p><strong><i class="fas fa-robot"></i> Sử dụng DeepSeek:</strong>
+                        {% if scan_data.request.use_deepseek %}
+                        <span class="badge badge-success"><i class="fas fa-check"></i> Có</span>
+                        {% else %}
+                        <span class="badge badge-error"><i class="fas fa-times"></i> Không</span>
+                        {% endif %}
+                    </p>
+                    <p><strong><i class="fas fa-clock"></i> Thời gian:</strong> {{ scan_data.timestamp }}</p>
+                </div>
+            </div>
+
+            {% if scan_data.response.results %}
+            <div class="card">
+                <h2><i class="fas fa-list"></i> Kết Quả Quét</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Template</th>
+                            <th>Mức độ</th>
+                            <th>Mô tả</th>
+                            <th>Chi tiết</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in scan_data.response.results %}
+                        <tr>
+                            <td>{{ result.template }}</td>
+                            <td>
+                                {% if result.severity == 'critical' %}
+                                <span class="badge badge-error"><i class="fas fa-skull"></i> Critical</span>
+                                {% elif result.severity == 'high' %}
+                                <span class="badge badge-error"><i class="fas fa-exclamation-triangle"></i> High</span>
+                                {% elif result.severity == 'medium' %}
+                                <span class="badge badge-warning"><i class="fas fa-exclamation-circle"></i>
+                                    Medium</span>
+                                {% else %}
+                                <span class="badge badge-info"><i class="fas fa-info-circle"></i> Low</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ result.description }}</td>
+                            <td>
+                                <button class="button" onclick="showDetails('{{ result.id }}')">
+                                    <i class="fas fa-eye"></i> Xem chi tiết
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="card">
+                <p class="status-success"><i class="fas fa-check-circle"></i> Không tìm thấy lỗ hổng nào.</p>
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <a href="/" class="button" style="margin-top: 2rem;">
+                <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                <i class="fas fa-code"></i> Được phát triển bởi Security Team
+            </p>
+        </div>
+        <div class="footer-links">
+            <a href="/privacy"><i class="fas fa-shield-alt"></i> Chính sách bảo mật</a>
+            <a href="/terms"><i class="fas fa-file-contract"></i> Điều khoản sử dụng</a>
+            <a href="/contact"><i class="fas fa-envelope"></i> Liên hệ</a>
+        </div>
+    </footer>
+
+    <script>
+        function showDetails(resultId) {
+            // Implement show details functionality
+            console.log('Showing details for result:', resultId);
+        }
+    </script>
+</body>
+
+</html>
