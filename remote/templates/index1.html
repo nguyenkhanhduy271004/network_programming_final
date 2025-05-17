@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quét Lỗ Hổng Bảo Mật</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-blue-600 p-4 text-white">
+        <div class="container mx-auto flex justify-between">
+            <a href="/" class="text-lg font-bold">Quét Lỗ Hổng Bảo Mật</a>
+            <div>
+                <a href="/" class="px-4">Trang chủ</a>
+                <a href="/history" class="px-4">Lịch sử</a>
+                <a href="#" class="px-4">Giới thiệu</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4">Chào mừng đến với Công cụ Quét Lỗ Hổng</h2>
+            <p class="mb-4">Nhập thông tin bên dưới để bắt đầu quét lỗ hổng bảo mật cho website của bạn.</p>
+
+            <form method="POST" class="space-y-4">
+                <h3 class="text-xl font-semibold">Gửi Yêu Cầu Quét</h3>
+                <div>
+                    <label class="block font-medium">Mục tiêu (Target):</label>
+                    <input type="text" name="target" required placeholder="https://example.com"
+                        class="w-full p-2 border rounded">
+                </div>
+
+                <div>
+                    <label class="block font-medium">Loại lỗ hổng:</label>
+                    <select name="vulnerability_type" class="w-full p-2 border rounded">
+                        <option value="http">HTTP Vulnerabilities</option>
+                        <option value="network">Network Vulnerabilities</option>
+                        <option value="ssl">SSL/TLS Vulnerabilities</option>
+                        <option value="all">Tất cả</option>
+                    </select>
+                    <p class="text-sm text-gray-600">Lưu ý: Chọn "Tất cả" sẽ quét toàn bộ kho template Nuclei, có thể
+                        tốn thời gian.</p>
+                </div>
+
+                <div>
+                    <label class="block font-medium">Templates:</label>
+                    <input type="text" name="templates" placeholder="http/technologies/,http/vulnerabilities/"
+                        class="w-full p-2 border rounded">
+                    <button type="button" onclick="suggestTemplates()"
+                        class="mt-2 bg-blue-500 text-white p-2 rounded">Gợi ý Templates</button>
+                    <p id="suggested-templates" class="text-sm text-gray-600"></p>
+                </div>
+
+                <div>
+                    <label class="block font-medium">Rate Limit:</label>
+                    <input type="number" name="rate_limit" value="50" min="1" max="1000"
+                        class="w-full p-2 border rounded">
+                    <p class="text-sm text-gray-600">Số lượng request tối đa mỗi giây (1-1000)</p>
+                </div>
+
+                <div>
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="use_deepseek" checked class="form-checkbox">
+                        <span class="ml-2">Sử dụng DeepSeek để gợi ý templates</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="bg-green-500 text-white p-2 rounded">Bắt đầu Quét</button>
+            </form>
+
+            {% if history %}
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold">Lịch Sử Quét Gần Đây</h3>
+                <table class="w-full mt-4 border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2 border">Thời gian</th>
+                            <th class="p-2 border">Mục tiêu</th>
+                            <th class="p-2 border">Loại lỗ hổng</th>
+                            <th class="p-2 border">Trạng thái</th>
+                            <th class="p-2 border">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scan in history[:5] %}
+                        <tr>
+                            <td class="p-2 border">{{ scan.timestamp }}</td>
+                            <td class="p-2 border">{{ scan.request.target }}</td>
+                            <td class="p-2 border">{{ scan.request.vulnerability_type }}</td>
+                            <td class="p-2 border">
+                                {% if scan.response.status == 'success' %}
+                                Thành công
+                                {% else %}
+                                Thất bại
+                                {% endif %}
+                            </td>
+                            <td class="p-2 border">
+                                <a href="/results/{{ scan.scan_id }}" class="text-blue-500">Xem chi tiết</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="/history" class="mt-4 inline-block bg-blue-500 text-white p-2 rounded">Xem tất cả lịch sử</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white p-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>Được phát triển bởi Security Team</p>
+            <div class="mt-2">
+                <a href="#" class="px-4">Chính sách bảo mật</a>
+                <a href="#" class="px-4">Điều khoản sử dụng</a>
+                <a href="#" class="px-4">Liên hệ</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        async function suggestTemplates() {
+            const target = document.querySelector('input[name="target"]').value;
+            const vulnerability_type = document.querySelector('select[name="vulnerability_type"]').value;
+            if (!target) {
+                alert("Vui lòng nhập mục tiêu!");
+                return;
+            }
+            const response = await fetch('/suggest_templates', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ target, vulnerability_type })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                document.getElementById('suggested-templates').textContent = `Gợi ý: ${data.templates.join(', ')}`;
+                document.querySelector('input[name="templates"]').value = data.templates.join(', ');
+            } else {
+                document.getElementById('suggested-templates').textContent = `Lỗi: ${data.errors.join(', ')}`;
+            }
+        }
+    </script>
+</body>
+
+</html>

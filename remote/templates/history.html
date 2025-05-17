@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quét Lỗ Hổng Bảo Mật</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-blue-600 p-4 text-white">
+        <div class="container mx-auto flex justify-between">
+            <a href="/" class="text-lg font-bold">Quét Lỗ Hổng Bảo Mật</a>
+            <div>
+                <a href="/" class="px-4">Trang chủ</a>
+                <a href="/history" class="px-4">Lịch sử</a>
+                <a href="#" class="px-4">Giới thiệu</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4">Toàn Bộ Lịch Sử Quét</h2>
+
+            {% if history %}
+            <table class="w-full mt-4 border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border">Thời gian</th>
+                        <th class="p-2 border">Mục tiêu</th>
+                        <th class="p-2 border">Loại lỗ hổng</th>
+                        <th class="p-2 border">Trạng thái</th>
+                        <th class="p-2 border">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for scan in history %}
+                    <tr>
+                        <td class="p-2 border">{{ scan.timestamp }}</td>
+                        <td class="p-2 border">{{ scan.request.target }}</td>
+                        <td class="p-2 border">{{ scan.request.vulnerability_type }}</td>
+                        <td class="p-2 border">
+                            {% if scan.response.status == 'success' %}
+                            Thành công
+                            {% else %}
+                            Thất bại
+                            {% endif %}
+                        </td>
+                        <td class="p-2 border">
+                            <a href="/results/{{ scan.scan_id }}" class="text-blue-500">Xem chi tiết</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-gray-600">Chưa có lịch sử quét.</p>
+            {% endif %}
+
+            <a href="/" class="mt-4 inline-block bg-blue-500 text-white p-2 rounded">Quay lại trang chủ</a>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white p-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>Được phát triển bởi Security Team</p>
+            <div class="mt-2">
+                <a href="#" class="px-4">Chính sách bảo mật</a>
+                <a href="#" class="px-4">Điều khoản sử dụng</a>
+                <a href="#" class="px-4">Liên hệ</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,3 +1,0 @@
-# Không cần thư viện bổ sung vì sử dụng các module chuẩn của Python
-# Nếu bạn muốn thêm logging hoặc giao diện, có thể cài thêm:
-# pip install requests  # (Tùy chọn, nếu muốn gọi API Nuclei trực tiếp)

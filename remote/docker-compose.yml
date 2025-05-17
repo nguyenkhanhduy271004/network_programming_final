@@ -1,0 +1,22 @@
+services:
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    ports:
+      - "5000:5000"
+    environment:
+      - AGENT_API_URL=http://agent:8000
+    depends_on:
+      - agent
+    volumes:
+      - ./scan_history.json:/app/scan_history.json
+
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    environment:
+      - DEEPSEEK_API_KEY=sk-e0abe1db2f0c4c1ca45a917a99a714f7
+    volumes:
+      - C:/Users/bogia/.nuclei-templates:/root/nuclei-templates

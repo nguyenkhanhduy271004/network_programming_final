@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quét Lỗ Hổng Bảo Mật</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-blue-600 p-4 text-white">
+        <div class="container mx-auto flex justify-between">
+            <a href="/" class="text-lg font-bold">Quét Lỗ Hổng Bảo Mật</a>
+            <div>
+                <a href="/" class="px-4">Trang chủ</a>
+                <a href="/history" class="px-4">Lịch sử</a>
+                <a href="#" class="px-4">Giới thiệu</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold mb-4">Kết Quả Quét</h2>
+
+            {% if error %}
+            <p class="text-red-500">{{ error }}</p>
+            {% else %}
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold">Thông Tin Yêu Cầu</h3>
+                <ul class="list-disc pl-6">
+                    <li><strong>Mục tiêu:</strong> {{ scan_data.request.target }}</li>
+                    <li><strong>Loại lỗ hổng:</strong> {{ scan_data.request.vulnerability_type }}</li>
+                    <li><strong>Templates:</strong> {{ scan_data.request.templates | join(', ') }}</li>
+                    <li><strong>Rate Limit:</strong> {{ scan_data.request.rate_limit }}</li>
+                    <li><strong>Sử dụng DeepSeek:</strong> {% if scan_data.request.use_deepseek %}Có{% else %}Không{%
+                        endif %}</li>
+                    <li><strong>Thời gian:</strong> {{ scan_data.timestamp }}</li>
+                </ul>
+            </div>
+
+            {% if scan_data.response.results %}
+            <div>
+                <h3 class="text-xl font-semibold">Kết Quả Quét</h3>
+                <table class="w-full mt-4 border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="p-2 border">Template</th>
+                            <th class="p-2 border">Mức độ</th>
+                            <th class="p-2 border">Mô tả</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in scan_data.response.results %}
+                        <tr>
+                            <td class="p-2 border">{{ result.template }}</td>
+                            <td class="p-2 border">
+                                {% if result.info.severity == 'critical' %}
+                                <span class="text-red-600">Critical</span>
+                                {% elif result.info.severity == 'high' %}
+                                <span class="text-orange-600">High</span>
+                                {% elif result.info.severity == 'medium' %}
+                                <span class="text-yellow-600">Medium</span>
+                                {% else %}
+                                <span class="text-green-600">Low</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-2 border">{{ result.info.description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-gray-600">Không tìm thấy lỗ hổng nào.</p>
+            {% endif %}
+            {% endif %}
+
+            <a href="/" class="mt-4 inline-block bg-blue-500 text-white p-2 rounded">Quay lại trang chủ</a>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white p-4 mt-8">
+        <div class="container mx-auto text-center">
+            <p>Được phát triển bởi Security Team</p>
+            <div class="mt-2">
+                <a href="#" class="px-4">Chính sách bảo mật</a>
+                <a href="#" class="px-4">Điều khoản sử dụng</a>
+                <a href="#" class="px-4">Liên hệ</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

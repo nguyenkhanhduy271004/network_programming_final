@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sử Quét Lỗ Hổng</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1><i class="fas fa-shield-alt"></i> Quét Lỗ Hổng Bảo Mật</h1>
+        <nav class="header-nav">
+            <a href="/"><i class="fas fa-home"></i> Trang chủ</a>
+            <a href="/history" class="active"><i class="fas fa-history"></i> Lịch sử</a>
+            <a href="/about"><i class="fas fa-info-circle"></i> Giới thiệu</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="card">
+                <h2><i class="fas fa-history"></i> Toàn Bộ Lịch Sử Quét</h2>
+
+                {% if history %}
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Mục tiêu</th>
+                                <th>Loại lỗ hổng</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for scan in history %}
+                            <tr>
+                                <td>{{ scan.timestamp }}</td>
+                                <td class="truncate">{{ scan.request.target }}</td>
+                                <td>
+                                    <span class="badge badge-info">
+                                        <i class="fas fa-bug"></i> {{ scan.request.vulnerability_type }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if scan.response.status == 'success' %}
+                                    <span class="badge badge-success">
+                                        <i class="fas fa-check-circle"></i> Thành công
+                                    </span>
+                                    {% else %}
+                                    <span class="badge badge-error">
+                                        <i class="fas fa-times-circle"></i> Thất bại
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('results', scan_id=scan.scan_id) }}"
+                                        class="button button-small">
+                                        <i class="fas fa-eye"></i> Xem chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="status-info">
+                    <i class="fas fa-info-circle"></i> Chưa có lịch sử quét.
+                </div>
+                {% endif %}
+
+                <div class="card-footer">
+                    <a href="/" class="button button-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại trang chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                <i class="fas fa-code"></i> Được phát triển bởi Security Team
+            </p>
+        </div>
+        <div class="footer-links">
+            <a href="/privacy"><i class="fas fa-shield-alt"></i> Chính sách bảo mật</a>
+            <a href="/terms"><i class="fas fa-file-contract"></i> Điều khoản sử dụng</a>
+            <a href="/contact"><i class="fas fa-envelope"></i> Liên hệ</a>
+        </div>
+    </footer>
+</body>
+
+</html>

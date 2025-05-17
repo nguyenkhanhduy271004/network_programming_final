@@ -1,0 +1,3 @@
+{"target": "http://testphp.vulnweb.com/", "vulnerability_type": "http", "templates": ["http/technologies/", "http/exposures/", "http/vulnerabilities/"]}
+{"target": "http://testphp.vulnweb.com/", "vulnerability_type": "network", "templates": ["http/technologies/", "http/exposures/", "http/vulnerabilities/"]}
+{"target": "http://testphp.vulnweb.com/", "vulnerability_type": "ssl", "templates": ["http/technologies/", "http/exposures/", "http/vulnerabilities/"]}
