@@ -129,7 +129,7 @@ def run_nuclei(target, templates=None, rate_limit=50):
     
     if valid_templates:
         # Combine valid templates into a single -t argument with comma-separated paths
-        cmd.extend(["-t", ",".join(valid_templates)])
+        cmd.extend(["-t", ", ".join(valid_templates)])
     else:
         # Use specified template directories
         default_templates = [
