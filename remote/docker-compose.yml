@@ -17,6 +17,6 @@ services:
       context: .
       dockerfile: Dockerfile.agent
     environment:
-      - DEEPSEEK_API_KEY=sk-e0abe1db2f0c4c1ca45a917a99a714f7
+      - DEEPSEEK_API_KEY=hehehe
     volumes:
       - C:/Users/bogia/.nuclei-templates:/root/nuclei-templates
