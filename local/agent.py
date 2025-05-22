@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 # DeepSeek API configuration
 DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-e0abe1db2f0c4c1ca45a917a99a714f7")
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "hehehe")
 DEEPSEEK_MODEL = "deepseek-chat"
 
 def clean_yaml_content(content):
